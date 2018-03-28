@@ -3,7 +3,7 @@
 #define _TYPE_H_
 #include <cstdint>
 
-#pragma pack(1)
+#pragma pack(push,1)
 typedef struct colorMapSpecification
 {
     //第一个元素的索引值，相当于颜色表起始位置
@@ -40,7 +40,7 @@ typedef struct imageSpecification
     uint8_t imageDescriptor;
 } imgSpec;
 
-typedef struct TGAFileHeader //size=18
+typedef struct tgaFileHeader //size=18
 {
     //offset=0 size=1 字段6 image ID的长度，0表示没有字段6
     uint8_t IDLength;
@@ -48,7 +48,8 @@ typedef struct TGAFileHeader //size=18
     //offset=1 size=1 使用的颜色类型，0->不使用颜色表 1->使用颜色表
     uint8_t colorMapType;
 
-    //offset=2 size=1 使用的图像类型 0->没有图像数据，
+    //offset=2 size=1 使用的图像类型 
+    //0->没有图像数据，
     //1->未压缩的颜色表图像 
     //2->未压缩的真彩图像
     //3->未压缩的黑白图像
@@ -70,9 +71,9 @@ typedef struct TGAFileHeader //size=18
 //位图文件头信息结构定义
 //其中不包含文件类型信息（由于结构体的内存结构决定，要是加了的话将不能正确读取文件信息）
 
-typedef struct tagBITMAPFILEHEADER {
-
-    uint16_t bfType;//固定为0x4d42
+typedef struct tagBITMAPFILEHEADER
+{
+    uint16_t bfType; //固定为0x4d42
     uint32_t bfSize; //文件大小
     uint16_t bfReserved1; //保留字，不考虑
     uint16_t bfReserved2; //保留字，同上
@@ -81,9 +82,8 @@ typedef struct tagBITMAPFILEHEADER {
 
 
 //信息头BITMAPINFOHEADER，也是一个结构，其定义如下：
-
-typedef struct tagBITMAPINFOHEADER {
-    //public:
+typedef struct tagBITMAPINFOHEADER
+{
     uint32_t biSize; //指定此结构体的长度，为40
     int32_t biWidth; //位图宽
     int32_t biHeight; //位图高
@@ -97,16 +97,15 @@ typedef struct tagBITMAPINFOHEADER {
     int32_t biClrImportant; //重要颜色数，如果为0，则表示所有颜色都是重要的
 } BITMAPINFOHEADER;
 
-
 //调色板Palette，当然，这里是对那些需要调色板的位图文件而言的。24位和32位是不需要调色板的。
 //（似乎是调色板结构体个数等于使用的颜色数。）
-
-typedef struct tagRGBQUAD {
+typedef struct tagRGBQUAD
+{
     //public:
     uint8_t red; //该颜色的红色分量
     uint8_t green; //该颜色的绿色分量
     uint8_t blue; //该颜色的蓝色分量
     uint8_t alpha; //保留值 alpha
 } RGBQUAD, colora;
-#pragma pack()
+#pragma pack(pop)
 #endif

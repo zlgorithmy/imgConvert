@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include "utility.h"
-#include "main.h"
 
 using namespace std;
 

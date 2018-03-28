@@ -14,8 +14,7 @@ bool loadPng(image* img)
     }
 
     char buf[PNG_BYTES_TO_CHECK];
-
-    auto pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+    auto pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     auto infoPtr = png_create_info_struct(pngPtr);
 
     setjmp(png_jmpbuf(pngPtr)); // 这句很重要
@@ -31,6 +30,7 @@ bool loadPng(image* img)
         pfile = nullptr;
         return false;
     }
+    printf("%s is png file!\n", img->name().c_str());
 
     rewind(pfile);
     png_init_io(pngPtr, pfile);
@@ -46,37 +46,16 @@ bool loadPng(image* img)
     img->height(png_get_image_height(pngPtr, infoPtr));//设置高度
 
     img->reAlloc();
-    if (channels == 4 || colorType == PNG_COLOR_TYPE_RGB_ALPHA)
-    {
-        for (uint32_t i = 0; i < img->height(); ++i)
-        {
-            for (uint32_t j = 0; j < img->width(); ++j)
-            {
-                colora clr;
-                clr.red = rowPointers[i][j * 4]; // red
-                clr.green = rowPointers[i][j * 4+1]; // green
-                clr.blue = rowPointers[i][j * 4+2]; // blue
-                clr.alpha = rowPointers[i][j * 4+3]; // alpha
 
-                if (!img->setColor(j, img->height()-1-i, clr))
-                {
-                    printf("loadpng error.\n");
-                    return false;
-                }
-            }
-        }
-    }
-    if (channels == 3)
+    colora clr = DEFAULTCOLOR;
+    if ((colorType == PNG_COLOR_TYPE_RGB_ALPHA)&&(channels == 3 || channels==4))
     {
         for (uint32_t i = 0; i < img->height(); ++i)
         {
             for (uint32_t j = 0; j < img->width(); ++j)
             {
-                colora clr;
-                clr.red = rowPointers[i][j * 3]; // red
-                clr.green = rowPointers[i][j * 3 + 1]; // green
-                clr.blue = rowPointers[i][j * 3 + 2]; // blue
-                clr.alpha = 255; // alpha
+                clr = getColor(rowPointers[i]+j * 4, channels);
+                changeRGBMod(clr);
 
                 if (!img->setColor(j, img->height() - 1 - i, clr))
                 {
